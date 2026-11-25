@@ -13,12 +13,13 @@ WORD = "hallucinating"
 
 
 def main() -> int:
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
+    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
 
-    # Gate self-check before writing: one word, 1-99 chars, not blank.
-    if not WORD or len(WORD) > 99 or WORD.strip() != WORD or len(WORD.split()) != 1:
+    # Gate self-check before writing: one word, 1-99 chars, no whitespace
+    # anywhere in it (a single word, not only whitespace-trimmed).
+    if not WORD or len(WORD) > 99 or any(c.isspace() for c in WORD):
         print(f"entry fails gate: {WORD!r}", file=sys.stderr)
         return 1
 
